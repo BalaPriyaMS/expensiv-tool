@@ -1,12 +1,10 @@
-import "./App.css";
-import { Button } from "./components/ui/button";
+import Dashboard from "./components/app/Dashboard";
 
 function App() {
   return (
-    <>
-      <Button>click me</Button>
-      <h1 className="text-3xl font-bold underline">Hello world!</h1>
-    </>
+    <div className="flex items-center justify-center mt-3">
+      <Dashboard />
+    </div>
   );
 }
 
