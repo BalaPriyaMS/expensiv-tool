@@ -7,46 +7,40 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useEffect, useState } from "react";
 
-const expenses = [
-  {
-    expense: "INV001",
-    paidBy: "Paid",
-    totalAmount: "$250.00",
-    date: "Apr 30",
-    split: "Equal Split",
-  },
-  {
-    expense: "INV002",
-    paidBy: "Pending",
-    totalAmount: "$150.00",
-    date: "Apr 30",
-    split: "Equal Split",
-  },
-  {
-    expense: "INV003",
-    paidBy: "Unpaid",
-    totalAmount: "$350.00",
-    date: "Apr 30",
-    split: "Equal Split",
-  },
-  {
-    expense: "INV004",
-    paidBy: "Paid",
-    totalAmount: "$450.00",
-    date: "Apr 30",
-    split: "Equal Split",
-  },
-  {
-    expense: "INV005",
-    paidBy: "Paid",
-    totalAmount: "$550.00",
-    date: "Apr 30",
-    split: "Equal Split",
-  },
-];
+type Expense = {
+  description: string;
+  amount: number;
+  paidBy: string;
+  split: string;
+  date: number;
+};
 
 export function RecentActivity() {
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const handleGet = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/expenses/get", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (!response.ok) {
+        throw new Error(`Failed to add expense: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      setExpenses(result);
+      // alert("Expense added successfully!");
+    } catch (error) {
+      console.error("Error submitting expense:", error);
+      // alert("Failed to add expense. Please try again.");
+    }
+  };
+  useEffect(() => {
+    handleGet();
+  }, []);
+
   return (
     <Card className="w-[94%] ml-12 mt-3 ">
       <CardHeader>Recent Activity</CardHeader>
@@ -62,10 +56,12 @@ export function RecentActivity() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {expenses.map((expense) => (
-              <TableRow key={expense.expense}>
-                <TableCell className="font-medium">{expense.expense}</TableCell>
-                <TableCell>{expense.totalAmount}</TableCell>
+            {expenses.map((expense, index) => (
+              <TableRow key={index}>
+                <TableCell className="font-medium">
+                  {expense.description}
+                </TableCell>
+                <TableCell>{expense.amount}</TableCell>
                 <TableCell>{expense.paidBy}</TableCell>
                 <TableCell>{expense.date}</TableCell>
                 <TableCell>{expense.split}</TableCell>
