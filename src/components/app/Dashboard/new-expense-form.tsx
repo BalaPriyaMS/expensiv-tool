@@ -1,41 +1,42 @@
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-// Define Zod Schema for Validation
-const expenseSchema = z.object({
-  description: z.string().min(1, "Expense name is required"),
-  amount: z.preprocess(
-    (val) => Number(val),
-    z.number().min(1, "Amount must be greater than zero")
-  ),
-  paidBy: z.string().min(1, "Expense name is required"),
-  split: z.string().min(1, "Expense name is required"),
-  date: z.date(),
-});
-
-type ExpenseFormData = z.infer<typeof expenseSchema>;
+import {
+  AddNewExpense,
+  ExpenseFormData,
+  expenseSchema,
+} from "../hooks/use-expense";
 
 const ExpenseForm = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
   const form = useForm<ExpenseFormData>({
     resolver: zodResolver(expenseSchema),
     defaultValues: {
@@ -48,135 +49,123 @@ const ExpenseForm = () => {
   });
 
   const onSubmit = async (data: ExpenseFormData) => {
-    try {
-      const expenseData = {
-        ...data,
-        date: new Date(data.date).toISOString(), // Ensure correct date format
-      };
-
-      const response = await fetch("http://localhost:5000/api/expenses/add", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(expenseData),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to add expense: ${response.statusText}`);
-      }
-
-      const result = await response.json();
-      console.log("Expense Submitted Successfully:", result);
-      alert("Expense added successfully!");
-    } catch (error) {
-      console.error("Error submitting expense:", error);
-      alert("Failed to add expense. Please try again.");
-    }
+    AddNewExpense(data);
+    setIsOpen(false);
+    form.reset();
   };
 
   return (
-    <Card className="max-w-full m-4">
-      <CardHeader>
-        <CardTitle>Add Expense</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            {/* Expense Name Field */}
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>description</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter description" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Amount Field */}
-            <FormField
-              control={form.control}
-              name="amount"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Amount</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter amount" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="paidBy"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>PaidBy</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter PaidBy" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="split"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Split</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter split" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="date"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Date</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Button>Add New Expense</Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-2xl ">
+        <Card className="max-w-full m-4">
+          <CardHeader>
+            <CardTitle>Add Expense</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-4"
+              >
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>description</FormLabel>
                       <FormControl>
-                        <Button
-                          variant="outline"
-                          className="w-full justify-start text-left"
-                        >
-                          <CalendarIcon className="w-4 h-4 mr-2" />
-                          {field.value
-                            ? format(field.value, "PPP")
-                            : "Pick a date"}
-                        </Button>
+                        <Input placeholder="Enter description" {...field} />
                       </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            {/* Submit Button */}
-            <Button type="submit" className="w-full">
-              Add Expense
-            </Button>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+                <FormField
+                  control={form.control}
+                  name="amount"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Amount</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter amount" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="paidBy"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>PaidBy</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter PaidBy" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="split"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Split</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter split" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="date"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Date</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              className="w-full justify-start text-left"
+                            >
+                              <CalendarIcon className="w-4 h-4 mr-2" />
+                              {field.value
+                                ? format(field.value, "PPP")
+                                : "Pick a date"}
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <DialogFooter>
+                  <Button type="submit" className="w-3/4 mx-16">
+                    Add Expense
+                  </Button>
+                </DialogFooter>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+      </DialogContent>
+    </Dialog>
   );
 };
 

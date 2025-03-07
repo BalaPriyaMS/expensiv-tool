@@ -1,8 +1,9 @@
+import { FaRupeeSign } from "react-icons/fa";
+
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { FaRupeeSign } from "react-icons/fa";
+
 import Chart from "./chart";
 import ExpenseForm from "./new-expense-form";
 import { RecentActivity } from "./recent-activity";
@@ -52,14 +53,8 @@ const Dashboard = () => {
       <div className="flex items-center justify-between">
         <h1 className="font-normal text-xl">Dashboard</h1>
         <p className="text-[#6B7280] text-sm">6 Group Members</p>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button>Add New Expense</Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl ">
-            <ExpenseForm />
-          </DialogContent>
-        </Dialog>
+
+        <ExpenseForm />
       </div>
       <div className="flex  mt-3 items-center justify-evenly">
         {expenseDetails.map((item) => (

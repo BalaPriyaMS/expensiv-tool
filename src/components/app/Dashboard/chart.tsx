@@ -7,7 +7,6 @@ const Chart = () => {
   useEffect(() => {
     const chartInstance = echarts.init(chartRef.current);
 
-    // Chart Configuration
     const options = {
       tooltip: {
         trigger: "item",
