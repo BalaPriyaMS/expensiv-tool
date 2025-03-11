@@ -29,13 +29,14 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import {
-  AddNewExpense,
   ExpenseFormData,
   expenseSchema,
+  useGetExpense,
 } from "../hooks/use-expense";
 
 const ExpenseForm = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { AddNewExpense } = useGetExpense();
 
   const form = useForm<ExpenseFormData>({
     resolver: zodResolver(expenseSchema),

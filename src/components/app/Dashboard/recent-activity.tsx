@@ -12,12 +12,16 @@ import {
 } from "@/components/ui/table";
 
 import { useGetExpense } from "../hooks/use-expense";
+import DeleteExpenseAlert from "./delete-expense";
+import { useExpenseStore } from "./set-expense";
 
 export function RecentActivity() {
-  const { expenses, getExpense } = useGetExpense();
+  const { expenses } = useExpenseStore();
+  const { getExpense } = useGetExpense();
+
   useEffect(() => {
     getExpense();
-  }, [getExpense]);
+  }, []);
 
   return (
     <Card className="w-[94%] ml-12 mt-3">
@@ -32,21 +36,29 @@ export function RecentActivity() {
                 <TableHead>Paid By</TableHead>
                 <TableHead>Date</TableHead>
                 <TableHead>Split</TableHead>
+                <TableHead>Action</TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody>
-              {expenses.map((expense, index) => (
-                <TableRow key={index}>
-                  <TableCell className="font-medium">
-                    {expense.description}
-                  </TableCell>
-                  <TableCell>{expense.amount}</TableCell>
-                  <TableCell>{expense.paidBy}</TableCell>
-                  <TableCell>{expense.date}</TableCell>
-                  <TableCell>{expense.split}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
+            {expenses.length ? (
+              <TableBody>
+                {expenses.map((expense, index) => (
+                  <TableRow key={index}>
+                    <TableCell>{expense.description}</TableCell>
+                    <TableCell>{expense.amount}</TableCell>
+                    <TableCell>{expense.paidBy}</TableCell>
+                    <TableCell>{expense.date}</TableCell>
+                    <TableCell>{expense.split}</TableCell>
+                    <TableCell>
+                      <DeleteExpenseAlert expenseId={expense._id} />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            ) : (
+              <div className="flex items-center justify-center h-44 text-gray-500 text-lg">
+                No Expense
+              </div>
+            )}
           </ScrollArea>
         </Table>
       </CardContent>
