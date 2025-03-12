@@ -3,7 +3,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const expenseRoutes = require("./routes/expense.routes");
-
+const authRoutes = require("./routes/auth.routes");
 const app = express();
 
 // Middleware
@@ -16,7 +16,7 @@ app.use(express.json()); // To parse JSON data
 
 // Routes
 app.use("/api/expenses", expenseRoutes);
-
+app.use("/api/auth", authRoutes);
 // Connect to MongoDB
 mongoose
   .connect(process.env.MONGO_URI)
