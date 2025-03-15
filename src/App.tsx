@@ -1,7 +1,6 @@
 import ExpenseTracker from "./components/app";
+import { useLoggedInStore } from "./components/app/auth/set-auth";
 import Dashboard from "./components/app/Dashboard";
-import { useLoggedInStore } from "./components/app/Dashboard/set-expense";
-
 function App() {
   const { loggedIn } = useLoggedInStore();
   return (

@@ -9,13 +9,3 @@ export const useExpenseStore = create<ExpenseStore>((set) => ({
   expenses: [],
   setExpenses: (expenses) => set({ expenses }),
 }));
-
-type LoggedInStore = {
-  loggedIn: boolean;
-  setLoggedIn: (loggedIn: boolean) => void;
-};
-
-export const useLoggedInStore = create<LoggedInStore>((set) => ({
-  loggedIn: false,
-  setLoggedIn: (loggedIn) => set({ loggedIn }),
-}));

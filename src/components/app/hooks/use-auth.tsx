@@ -1,5 +1,10 @@
 import axios from "axios";
 import { z } from "zod";
+import {
+  useErrorMsgStore,
+  useErrorStore,
+  useLoggedInStore,
+} from "../auth/set-auth";
 
 export type SignUpDetails = {
   name: string;
@@ -7,6 +12,10 @@ export type SignUpDetails = {
   password: string;
 };
 
+export type LogInDetails = {
+  email: string;
+  password: string;
+};
 export const signInSchema = z.object({
   name: z.string().min(1, "Enter Name"),
   email: z.string().email({ message: "Invalid email address" }),
@@ -15,6 +24,9 @@ export const signInSchema = z.object({
 
 export type SignUpFormData = z.infer<typeof signInSchema>;
 export const useAuth = () => {
+  const { setLoggedIn } = useLoggedInStore();
+  const { setIsError } = useErrorStore();
+  const { setIsErrorMsg } = useErrorMsgStore();
   const getSignUp = async (data: SignUpFormData) => {
     try {
       const response = await axios.post(
@@ -22,9 +34,27 @@ export const useAuth = () => {
         data
       );
       console.log(response);
+      setLoggedIn(true);
     } catch (error) {
+      setIsError(true);
+      setIsErrorMsg("User already exists");
       console.error("Error SignUp:", error);
     }
   };
-  return { getSignUp };
+
+  const getLogIn = async (data: LogInDetails) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/auth/login",
+        data
+      );
+      console.log(response);
+      setLoggedIn(true);
+    } catch (error) {
+      setIsError(true);
+      setIsErrorMsg("Invalid password or email");
+      console.error("Error LogIn", error);
+    }
+  };
+  return { getSignUp, getLogIn };
 };

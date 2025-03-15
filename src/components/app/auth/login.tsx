@@ -19,16 +19,20 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useLoggedInStore } from "../Dashboard/set-expense";
 import {
+  LogInDetails,
   signInSchema,
   SignUpDetails,
-  useAuth,
   SignUpFormData,
+  useAuth,
 } from "../hooks/use-auth";
+import { useErrorMsgStore, useErrorStore } from "./set-auth";
 
 export const LoginForm = () => {
-  const { setLoggedIn } = useLoggedInStore();
+  const { getLogIn } = useAuth();
+  const { isError } = useErrorStore();
+  const { isErrorMsg } = useErrorMsgStore();
+
   const userSchema = z.object({
     email: z.string().email({ message: "Invalid email address" }),
     password: z.string().min(1, "Enter valid password"),
@@ -41,9 +45,9 @@ export const LoginForm = () => {
     },
   });
 
-  const onSubmit = async () => {
+  const onSubmit = async (data: LogInDetails) => {
     console.log("login");
-    setLoggedIn(true);
+    getLogIn(data);
   };
 
   return (
@@ -102,6 +106,11 @@ export const LoginForm = () => {
                 </DialogFooter>
               </form>
             </Form>
+            {isError && (
+              <div className="text-red-600 text-center text-lg mt-5">
+                {isErrorMsg}
+              </div>
+            )}
           </CardContent>
         </Card>
       </DialogContent>
@@ -110,9 +119,9 @@ export const LoginForm = () => {
 };
 
 export const SignUp = () => {
-  const { setLoggedIn } = useLoggedInStore();
   const { getSignUp } = useAuth();
-
+  const { isError } = useErrorStore();
+  const { isErrorMsg } = useErrorMsgStore();
   const form = useForm<SignUpFormData>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -125,7 +134,6 @@ export const SignUp = () => {
   const onSubmit = async (data: SignUpDetails) => {
     console.log("login");
     getSignUp(data);
-    setLoggedIn(true);
   };
 
   return (
@@ -197,6 +205,12 @@ export const SignUp = () => {
                 </DialogFooter>
               </form>
             </Form>
+
+            {isError && (
+              <div className="text-red-600 text-center text-lg mt-5">
+                {isErrorMsg}
+              </div>
+            )}
           </CardContent>
         </Card>
       </DialogContent>
