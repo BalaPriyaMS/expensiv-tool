@@ -1,12 +1,11 @@
-import React from "react";
 import Register from "./auth/register";
 
-const ExpenseTracker = () => {
+const LogInSystem = () => {
   return (
-    <div>
+    <div className="flex justify-center items-center h-[calc(100vh_-_250px)] ">
       <Register />
     </div>
   );
 };
 
-export default ExpenseTracker;
+export default LogInSystem;

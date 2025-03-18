@@ -49,12 +49,13 @@ const settings = [
 ];
 const Dashboard = () => {
   return (
-    <div className="h-[calc(100vh_-_50px)] rounded-sm w-[90%] py-4 px-2 bg-muted ">
+    <div className="h-screen rounded-sm w-full py-4 px-4 bg-muted ml-[-40px]">
       <div className="flex items-center justify-between">
         <h1 className="font-normal text-xl">Dashboard</h1>
-        <p className="text-[#6B7280] text-sm">6 Group Members</p>
-
-        <ExpenseForm />
+        <div className="flex gap-10">
+          <ExpenseForm />
+          <p>profile</p>
+        </div>
       </div>
       <div className="flex  mt-3 items-center justify-evenly">
         {expenseDetails.map((item) => (
