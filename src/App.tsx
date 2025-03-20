@@ -6,6 +6,7 @@ import { AppSidebar } from "./components/app-sidebar";
 import { ResetPassword } from "./components/app/auth/reset-password";
 import { useLoggedInStore } from "./components/app/auth/set-auth";
 import Dashboard from "./components/app/Dashboard";
+import ExpenseForm from "./components/app/Dashboard/new-expense-form";
 import { Button } from "./components/ui/button";
 import { SidebarProvider } from "./components/ui/sidebar";
 
@@ -34,12 +35,13 @@ function App() {
           </SidebarProvider>
         )}
 
-        <div className="flex-1">
+        <div className="flex-1 mr-12">
           <Routes>
             <Route
               path="/"
               element={loggedIn ? <Dashboard /> : <LogInSystem />}
             />
+            <Route path="/add-expense" element={<ExpenseForm />} />
             <Route path="/reset-password/:token" element={<ResetPassword />} />
             <Route path="/success-reset" element={<SuccessReset />} />
           </Routes>

@@ -24,7 +24,7 @@ export function RecentActivity() {
   }, []);
 
   return (
-    <Card className="w-[94%] ml-12 mt-3">
+    <Card className="w-full  mt-3">
       <CardHeader>Recent Activity</CardHeader>
       <CardContent>
         <Table className="overflow-auto">
